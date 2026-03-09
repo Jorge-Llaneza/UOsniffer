@@ -1,4 +1,5 @@
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 
 pub struct StudentDataSet {
     exam_marks: Vec<ExamMarks>,
@@ -13,13 +14,64 @@ struct Mark {
     normalized_score: f64,
     student: Student,
 }
+#[derive(Debug, Clone, PartialEq)]
 struct Student {
     name: Vec<String>,
     surname: Vec<String>
 }
 
 pub(crate) fn get_dataset() -> Option<StudentDataSet> {
-    todo!()
+    let data_path = PathBuf::new()
+        .join("data");
+
+    let mut exam_marks = Vec::<ExamMarks>::new();
+
+    for entry in std::fs::read_dir(data_path).unwrap() {
+        if let Ok(entry) = entry {
+            match read_pdf(&entry.path()) {
+                Ok(markset) => exam_marks.push(markset),
+                Err(_) => (),
+            }
+        }
+    }
+
+    let students = match collect_students(&exam_marks) {
+        Some(s) => s,
+        None => return None,
+    };
+
+    if exam_marks.len() > 0 {
+        Some(StudentDataSet {
+            exam_marks,
+            students,
+        })
+    } else {
+        None
+    }
+}
+
+fn collect_students(exams: &Vec<ExamMarks>) -> Option<Vec<Student>> {
+    let mut seen_students = Vec::<Student>::new();
+
+    if exams.is_empty() {
+        return None;
+    }
+
+    for exam in exams {
+        for mark in &exam.marks {
+            if seen_students.contains(&mark.student) {
+                continue;
+            } else {
+                seen_students.push(mark.student.clone());
+            }
+        }
+    }
+
+    if seen_students.is_empty() {
+        return None;
+    }
+
+    Some(seen_students)
 }
 
 fn read_pdf(path: &Path) -> Result<ExamMarks, ReadPdfError> {
@@ -58,20 +110,30 @@ fn extract_marks(text: &str) -> Result<Vec<Mark>, ()> {
 }
 fn extract_mark(pdf_text_row: &str) -> Option<Mark> {
     let student = match find_student(pdf_text_row) {
-        Ok(s) => s,
+        Some(s) => s,
         None => return None,
     };
 
-    let mark = find_mark(pdf_text_row) {
-        Ok(f) => f,
+    let mark = match find_mark(pdf_text_row) {
+        Some(f) => f,
         None => return None
     };
+
+    Some(
+        Mark {
+            normalized_score: mark,
+            student
+        }
+    )
 }
 
-fn find_mark(pdf_row: &str) -> Option<Mark> {
+fn find_mark(pdf_row: &str) -> Option<f64> {
     for word in pdf_row.split_whitespace() {
-
+        if let Ok(mark) = f64::from_str(&word.replace(",", ".")) {
+            return Some(mark)
+        }
     }
+    None
 }
 
 fn find_student(pdf_row: &str) -> Option<Student> {
@@ -116,6 +178,7 @@ enum ReadPdfError {
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_relative_eq;
     use super::*;
 
     #[test]
@@ -127,8 +190,20 @@ mod tests {
     fn extract_pdf_marks() {
         let pdf = pdf_extract::extract_text(Path::new("test/assets/notes.pdf")).unwrap();
 
-        for row in pdf.lines() {
-            extract_mark(&row);
+        match extract_marks(&pdf) {
+            Ok(m) => {
+                assert_eq!(m.len(), 5);
+                assert_relative_eq!(m[0].normalized_score, 2.6);
+                assert_relative_eq!(m[1].normalized_score, 7.9);
+                assert_relative_eq!(m[2].normalized_score, 9.0);
+
+                assert_eq!(m[3].student.name[0], "nícolo");
+                assert_eq!(m[2].student.surname[0], "ertenestez");
+                assert_eq!(m[2].student.surname[1], "ponta");
+                assert_eq!(m[2].student.name[0], "carlos");
+                assert_eq!(m[2].student.name[1], "papero");
+            }
+            Err(()) => panic!()
         }
     }
 }
