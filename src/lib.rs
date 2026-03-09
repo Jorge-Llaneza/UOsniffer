@@ -1,5 +1,6 @@
 mod commands;
 mod store;
+mod ranking;
 
 use std::io::Write;
 use std::str::FromStr;

@@ -1,1 +1,4 @@
 /target
+
+# For tests with real data
+/data

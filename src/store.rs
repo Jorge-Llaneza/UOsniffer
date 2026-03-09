@@ -1,23 +1,39 @@
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
+#[derive(Debug)]
 pub struct StudentDataSet {
-    exam_marks: Vec<ExamMarks>,
+     exam_marks: Vec<ExamMarks>,
     students: Vec<Student>,
 }
-struct ExamMarks {
-    exam_name: String,
-    marks: Vec<Mark>,
+
+impl StudentDataSet {
+    /// Creates a deep clone of the dataset's students
+    pub fn students(&self) -> Vec<Student> {
+        self.students.clone()
+    }
+
+    /// Creates a deep clone of the dataset's exams
+    pub fn exam_marks(&self) -> Vec<ExamMarks> {
+        self.exam_marks.clone()
+    }
 }
-struct Mark {
+
+#[derive(Debug, Clone)]
+pub(crate) struct ExamMarks {
+    exam_name: String,
+    pub(super) marks: Vec<Mark>,
+}
+#[derive(Debug, Clone)]
+pub(super) struct Mark {
     /// score in range [0.0 , 1.0]
-    normalized_score: f64,
-    student: Student,
+    pub(super) normalized_score: f64,
+    pub(super) student: Student,
 }
 #[derive(Debug, Clone, PartialEq)]
-struct Student {
-    name: Vec<String>,
-    surname: Vec<String>
+pub(crate) struct Student {
+    pub(super) name: Vec<String>,
+    pub(super) surname: Vec<String>
 }
 
 pub(crate) fn get_dataset() -> Option<StudentDataSet> {
@@ -178,8 +194,8 @@ enum ReadPdfError {
 
 #[cfg(test)]
 mod tests {
-    use approx::assert_relative_eq;
     use super::*;
+    use approx::assert_relative_eq;
 
     #[test]
     fn extract_valid_mark_test() {

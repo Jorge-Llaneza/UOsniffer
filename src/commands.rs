@@ -1,10 +1,20 @@
+use crate::ranking::format;
 use crate::store;
-use crate::store::StudentDataSet;
 
 pub(crate) fn create_ranking() -> Result<String, String> {
-    let marks = match store::get_dataset() {
-        Some(s) => s,
-        None => return Err(String::from("Dataset not found, load data to calculate a ranking")),
-    };
-    return Ok("lusa 1, bizu 2".to_string());
+    match store::get_dataset() {
+        Some(s) => Ok(format(s)),
+        None => Err(String::from("Dataset not found, load pdfs in the data folder to create a ranking")), //TODO not very  user friendly, better upload tool pending
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[ignore]
+    #[test]
+    fn hardcoded_create_ranking() {
+        println!("{}", create_ranking().unwrap());
+    }
 }
