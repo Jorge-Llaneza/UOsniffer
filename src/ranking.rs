@@ -7,6 +7,7 @@ struct StudentRanked {
     exams_taken: i32,
 }
 
+/// TODO api docs
 pub(crate) fn format(dataset: StudentDataSet) -> String {
     let students = dataset.students();
     let marks = dataset.exam_marks();

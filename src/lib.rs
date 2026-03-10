@@ -17,8 +17,22 @@ pub fn run_client() {
 
         let mut incoming_command = String::new();
         std::io::stdin().read_line(&mut incoming_command).unwrap();
-        let command = parse_command(&incoming_command);
-        match execute_command(&command) {
+        let options: String;
+        let command = match incoming_command.trim().split_once(" ") {
+            Some((command, o)) => {
+                options = String::from(o);
+                parse_command(command)
+            },
+            None => {
+                options = String::new();
+                parse_command(&incoming_command)
+            },
+        };
+
+        match execute_command(&command, options
+            .split(" ")
+            .map(|s| s.to_string() )
+            .collect()) {
             Ok(result) => println!("{}", result),
             Err(message) => {
                 println!("{}", message);
@@ -28,14 +42,15 @@ pub fn run_client() {
     }
 }
 
+/// trims the string before conversion
 fn parse_command(command: &str) -> Command {
     Command::from_str(command).unwrap()
 }
 
-fn execute_command(command: &Command) -> Result<String, String> {
+fn execute_command(command: &Command, options: Vec<String>) -> Result<String, String> {
     match command {
         Command::ExitProgram => Err(String::from("Closing UOsniffer")),
-        Command::CreateRanking => commands::create_ranking(),
+        Command::CreateRanking => commands::create_ranking(options),
         Command::UnmatchedCommand(s) => Ok(format!(r#"Unknown command: "{}""#, s))
     }
 }
