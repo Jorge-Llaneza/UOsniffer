@@ -20,7 +20,7 @@ pub(crate) fn format(dataset: StudentDataSet) -> String {
 
     // TODO implement advanced filtering
     ranking = ranking.into_iter()
-        .filter(|student| student.exams_taken > 0)
+        .filter(|student| student.exams_taken > 2)
         .collect();
 
     sort(&mut ranking);

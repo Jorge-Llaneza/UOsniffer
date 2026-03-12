@@ -15,6 +15,6 @@ mod tests {
     #[ignore]
     #[test]
     fn hardcoded_create_ranking() {
-        println!("{}", create_ranking().unwrap());
+        println!("{}", create_ranking(vec![]).unwrap());
     }
 }

@@ -177,7 +177,7 @@ fn find_student(pdf_row: &str) -> Option<Student> {
     if name.is_empty() {
         return None;
     }
-    if surname.is_empty() {
+    if surname.is_empty() || surname.len() > 3 {
         return None;
     }
 
