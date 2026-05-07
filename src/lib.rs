@@ -2,21 +2,22 @@ mod commands;
 mod store;
 mod ranking;
 
+use std::io;
 use std::io::Write;
 use std::str::FromStr;
 
 const WELCOME_MESSAGE: &str = "Welcome to the note sniffer CLI
 To see a list of the commands type commands
 To get help about a command type help <Command>";
-pub fn run_client() {
+pub fn run_client() -> io::Result<()> {
     println!("{}", WELCOME_MESSAGE);
 
     loop {
         print!(">>> ");
-        std::io::stdout().flush().unwrap();
+        io::stdout().flush()?;
 
         let mut incoming_command = String::new();
-        std::io::stdin().read_line(&mut incoming_command).unwrap();
+        io::stdin().read_line(&mut incoming_command)?;
         let options: String;
         let command = match incoming_command.trim().split_once(" ") {
             Some((command, o)) => {
@@ -40,6 +41,7 @@ pub fn run_client() {
             }
         }
     }
+    Ok(())
 }
 
 /// trims the string before conversion
