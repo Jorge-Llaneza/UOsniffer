@@ -10,22 +10,8 @@ pub fn run_client(interactor: impl Interactor) -> io::Result<()> {
     interactor.show_initial_message()?;
 
     loop {
-        print!(">>> ");
-        io::stdout().flush()?;
 
-        let mut incoming_command = String::new();
-        io::stdin().read_line(&mut incoming_command)?;
-        let options: String;
-        let command = match incoming_command.trim().split_once(" ") {
-            Some((command, o)) => {
-                options = String::from(o);
-                parse_command(command)
-            },
-            None => {
-                options = String::new();
-                parse_command(&incoming_command)
-            },
-        };
+        let (command, options) = interactor.ask_command()?;
 
         match execute_command(&command, options
             .split(" ")
@@ -33,7 +19,7 @@ pub fn run_client(interactor: impl Interactor) -> io::Result<()> {
             .collect()) {
             Ok(result) => println!("{}", result),
             Err(message) => {
-                println!("{}", message);
+                interactor.show_error_message(message)?;
                 break;
             }
         }
@@ -43,7 +29,7 @@ pub fn run_client(interactor: impl Interactor) -> io::Result<()> {
 
 pub trait Interactor {
     fn show_initial_message(&self) -> io::Result<()>;
-    fn ask_command(&self) -> io::Result<Command>;
+    fn ask_command(&self) -> io::Result<(Command, String)>;
     fn show_command_result(&self, result: String) -> io::Result<()>;
     fn show_error_message(&self, message: String) -> io::Result<()>;
     fn show_fatal_error_message(&self, message: String) -> io::Result<()>;
@@ -62,20 +48,39 @@ impl Interactor for ConsoleInteractor {
         Ok(())
     }
 
-    fn ask_command(&self) -> io::Result<Command> {
-        todo!()
+    fn ask_command(&self) -> io::Result<(Command, String)> {
+        print!(">>> ");
+        io::stdout().flush()?;
+
+        let mut incoming_command = String::new();
+        io::stdin().read_line(&mut incoming_command)?;
+        let options: String;
+        let command = match incoming_command.trim().split_once(" ") {
+            Some((command, o)) => {
+                options = String::from(o);
+                parse_command(command)
+            },
+            None => {
+                options = String::new();
+                parse_command(&incoming_command)
+            },
+        };
+        Ok((command, options))
     }
 
     fn show_command_result(&self, result: String) -> io::Result<()> {
-        todo!()
+        println!("{}", result);
+        Ok(())
     }
 
     fn show_error_message(&self, message: String) -> io::Result<()> {
-        todo!()
+        println!("{}", message);
+        Ok(())
     }
 
     fn show_fatal_error_message(&self, message: String) -> io::Result<()> {
-        todo!()
+        println!("{}", message);
+        Ok(())
     }
 }
 
