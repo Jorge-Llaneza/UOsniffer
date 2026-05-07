@@ -6,11 +6,8 @@ use std::io;
 use std::io::Write;
 use std::str::FromStr;
 
-const WELCOME_MESSAGE: &str = "Welcome to the note sniffer CLI
-To see a list of the commands type commands
-To get help about a command type help <Command>";
-pub fn run_client() -> io::Result<()> {
-    println!("{}", WELCOME_MESSAGE);
+pub fn run_client(interactor: impl Interactor) -> io::Result<()> {
+    interactor.show_initial_message()?;
 
     loop {
         print!(">>> ");
@@ -44,6 +41,44 @@ pub fn run_client() -> io::Result<()> {
     Ok(())
 }
 
+pub trait Interactor {
+    fn show_initial_message(&self) -> io::Result<()>;
+    fn ask_command(&self) -> io::Result<Command>;
+    fn show_command_result(&self, result: String) -> io::Result<()>;
+    fn show_error_message(&self, message: String) -> io::Result<()>;
+    fn show_fatal_error_message(&self, message: String) -> io::Result<()>;
+}
+
+pub struct ConsoleInteractor {
+
+}
+
+const WELCOME_MESSAGE: &str = "Welcome to the note sniffer CLI
+To see a list of the commands type commands
+To get help about a command type help <Command>";
+impl Interactor for ConsoleInteractor {
+    fn show_initial_message(&self) -> io::Result<()> {
+        println!("{}", WELCOME_MESSAGE);
+        Ok(())
+    }
+
+    fn ask_command(&self) -> io::Result<Command> {
+        todo!()
+    }
+
+    fn show_command_result(&self, result: String) -> io::Result<()> {
+        todo!()
+    }
+
+    fn show_error_message(&self, message: String) -> io::Result<()> {
+        todo!()
+    }
+
+    fn show_fatal_error_message(&self, message: String) -> io::Result<()> {
+        todo!()
+    }
+}
+
 /// trims the string before conversion
 fn parse_command(command: &str) -> Command {
     Command::from_str(command).unwrap()
@@ -58,7 +93,7 @@ fn execute_command(command: &Command, options: Vec<String>) -> Result<String, St
 }
 
 
-enum Command {
+pub enum Command {
     ExitProgram,
     CreateRanking,
     UnmatchedCommand(String),
