@@ -4,7 +4,7 @@ use crate::store;
 pub(crate) fn create_ranking(options: Vec<String>) -> Result<String, String> {
 
     for option in options {
-        if let Some(index) = option.find("--min_exams") {}
+        if let Some(_index) = option.find("--min_exams") {}
     }
 
     match store::get_dataset() {

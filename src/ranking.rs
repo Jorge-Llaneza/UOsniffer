@@ -1,4 +1,4 @@
-use crate::store::{ExamMarks, Mark, Student, StudentDataSet};
+use crate::store::{ExamMarks, Student, StudentDataSet};
 
 #[derive(Debug)]
 struct StudentRanked {

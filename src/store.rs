@@ -17,6 +17,15 @@ impl StudentDataSet {
     pub fn exam_marks(&self) -> Vec<ExamMarks> {
         self.exam_marks.clone()
     }
+
+    #[allow(dead_code)]
+    pub fn exam_names(&self) -> Vec<String> {
+        let mut names = Vec::new();
+        for exam in self.exam_marks.iter() {
+            names.push(exam.exam_name.clone());
+        }
+        names
+    }
 }
 
 #[derive(Debug, Clone)]
