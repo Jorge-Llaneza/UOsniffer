@@ -1,4 +1,4 @@
-use uo_sniffer::ConsoleInteractor;
+use uo_sniffer::ui::console_interactor::ConsoleInteractor;
 
 fn main() {
     let console_interactor = ConsoleInteractor {};
