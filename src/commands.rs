@@ -1,11 +1,7 @@
 use crate::ranking::format;
 use crate::store;
 
-pub(crate) fn create_ranking(options: Vec<String>) -> Result<String, String> {
-
-    for option in options {
-        if let Some(_index) = option.find("--min_exams") {}
-    }
+pub(crate) fn create_ranking() -> Result<String, String> {
 
     match store::get_dataset() {
         Some(s) => Ok(format(s)),

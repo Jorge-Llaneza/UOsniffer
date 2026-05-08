@@ -1,7 +1,7 @@
 use std::io;
 use std::io::Write;
-use std::str::FromStr;
 use crate::{Command, Interactor};
+use crate::ui::parser::ConsoleCommandParser;
 
 pub struct ConsoleInteractor {
 
@@ -16,24 +16,15 @@ impl Interactor for ConsoleInteractor {
         Ok(())
     }
 
-    fn ask_command(&self) -> io::Result<(Command, String)> {
+    fn ask_command(&self) -> io::Result<Command> {
         print!(">>> ");
         io::stdout().flush()?;
 
         let mut incoming_command = String::new();
         io::stdin().read_line(&mut incoming_command)?;
-        let options: String;
-        let command = match incoming_command.trim().split_once(" ") {
-            Some((command, o)) => {
-                options = String::from(o);
-                parse_command(command)
-            },
-            None => {
-                options = String::new();
-                parse_command(&incoming_command)
-            },
-        };
-        Ok((command, options))
+
+        let parser = ConsoleCommandParser::new();
+        Ok(parser.parse_line(&incoming_command))
     }
 
     fn show_command_result(&self, result: String) -> io::Result<()> {
@@ -52,8 +43,4 @@ impl Interactor for ConsoleInteractor {
     }
 }
 
-/// trims the string before conversion
-fn parse_command(command: &str) -> Command {
-    Command::from_str(command).unwrap()
-}
 
