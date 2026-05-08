@@ -18,7 +18,7 @@ impl ConsoleCommandParser {
            "q" | "exit" => Command::ExitProgram,
            "ranking" => self.parse_ranking_commands(line),
            "commands" => Command::ShowAllCommands,
-           _ => Command::UnmatchedCommand(String::from(command)),
+           _ => Command::UnmatchedCommand(String::from(line.trim())),
        }
     }
 
