@@ -31,9 +31,12 @@ pub trait Interactor {
     fn show_fatal_error_message(&self, message: String) -> io::Result<()>;
 }
 
+const COMMAND_LIST: &str = "exit (q): exit program
+ranking: create ranking";
 fn execute_command(command: &Command) -> Result<String, String> {
     match command {
         Command::ExitProgram => Err(String::from("Closing UOsniffer")),
+        Command::ShowAllCommands => Ok(String::from(COMMAND_LIST)),
         Command::CreateRanking => commands::create_ranking(),
         Command::UnmatchedCommand(s) => Ok(format!(r#"Unknown command: "{}""#, s))
     }
@@ -43,5 +46,6 @@ fn execute_command(command: &Command) -> Result<String, String> {
 pub enum Command {
     ExitProgram,
     CreateRanking,
+    ShowAllCommands,
     UnmatchedCommand(String),
 }

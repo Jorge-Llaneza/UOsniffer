@@ -1,5 +1,4 @@
 use crate::Command;
-use crate::Command::{ExitProgram, UnmatchedCommand};
 
 pub struct ConsoleCommandParser {
     _sealed: ()
@@ -14,8 +13,10 @@ impl ConsoleCommandParser {
 
     pub fn parse_line(&self, line: &str) -> Command {
        match line.trim() {
-           "q" | "exit" => ExitProgram,
-           _ => UnmatchedCommand(String::from(line.trim())),
+           "q" | "exit" => Command::ExitProgram,
+           "ranking" => Command::CreateRanking,
+           "commands" => Command::ShowAllCommands,
+           _ => Command::UnmatchedCommand(String::from(line.trim())),
        }
     }
 }
