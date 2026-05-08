@@ -1,3 +1,4 @@
+use crate::commands::CreateRankingOptions;
 use crate::store::{ExamMarks, Student, StudentDataSet};
 
 #[derive(Debug)]
@@ -8,7 +9,7 @@ struct StudentRanked {
 }
 
 /// TODO api docs
-pub(crate) fn format(dataset: StudentDataSet) -> String {
+pub(crate) fn format(dataset: StudentDataSet, options: &CreateRankingOptions) -> String {
     let students = dataset.students();
     let marks = dataset.exam_marks();
 
@@ -20,8 +21,9 @@ pub(crate) fn format(dataset: StudentDataSet) -> String {
 
     // TODO implement advanced filtering
     ranking = ranking.into_iter()
-        .filter(|student| student.exams_taken > 0)
+        .filter(|student| student.exams_taken > options.min_exams_taken() as i32)
         .collect();
+
 
     sort(&mut ranking);
 

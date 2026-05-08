@@ -38,7 +38,7 @@ fn execute_command(command: &Command) -> Result<String, String> {
     match command {
         Command::ExitProgram => Err(String::from("Closing UOsniffer")),
         Command::ShowAllCommands => Ok(String::from(COMMAND_LIST)),
-        Command::CreateRanking(options) => commands::create_ranking(op),
+        Command::CreateRanking(options) => commands::create_ranking(options),
         Command::UnmatchedCommand(s) => Ok(format!(r#"Unknown command: "{}""#, s))
     }
 }
