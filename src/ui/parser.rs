@@ -1,4 +1,4 @@
-use crate::Command;
+use crate::commands::Command;
 
 pub struct ConsoleCommandParser {
     _sealed: ()

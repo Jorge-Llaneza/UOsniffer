@@ -1,6 +1,7 @@
 use std::io;
 use std::io::Write;
-use crate::{Command, Interactor};
+use crate::Interactor;
+use crate::commands::Command;
 use crate::ui::parser::ConsoleCommandParser;
 
 pub struct ConsoleInteractor {

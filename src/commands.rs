@@ -19,3 +19,26 @@ mod tests {
         println!("{}", create_ranking(vec![]).unwrap());
     }
 }
+
+pub enum Command {
+    ExitProgram,
+    CreateRanking(CreateRankingOptions),
+    ShowAllCommands,
+    UnmatchedCommand(String),
+}
+
+struct CreateRankingOptions {
+    min_exams_taken: u32  
+}
+
+impl CreateRankingOptions {
+    pub fn default() -> Self {
+       Self {
+           min_exams_taken: 0
+       }  
+    }
+}
+
+impl Command {
+    
+}
